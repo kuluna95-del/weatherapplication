@@ -5,8 +5,9 @@ require("dotenv").config();
 
 const app = express();
 
-// Allow requests only from frontend port
-app.use(cors({ origin: "http://localhost:3000" }));
+// Allow requests from any origin (for frontend Vercel)
+// You can replace "*" with your Vercel URL for production
+app.use(cors()); 
 app.use(express.json());
 
 // Connect to MongoDB (Weather App DB)
@@ -22,6 +23,11 @@ const citySchema = new mongoose.Schema({
 });
 
 const City = mongoose.model("City", citySchema);
+
+// Test route for root
+app.get("/", (req, res) => {
+  res.send("Weather backend is running!");
+});
 
 // Routes
 app.get("/api/cities", async (req, res) => {

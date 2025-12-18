@@ -15,9 +15,13 @@ export default function Home() {
   const makeUrl = (q: string) =>
     `https://api.openweathermap.org/data/2.5/weather?q=${q}&units=imperial&appid=${process.env.NEXT_PUBLIC_WEATHER_KEY}`;
 
+  // Frontend en prod utilise l'URL Render
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL!; 
+  // Sur Vercel, créer la variable NEXT_PUBLIC_BACKEND_URL = https://weatherbackend-u64d.onrender.com/api/cities
+
   const fetchSavedCities = async () => {
     try {
-      const res = await fetch("http://localhost:5001/api/cities");
+      const res = await fetch(backendUrl);
       if (!res.ok) throw new Error("Failed to fetch saved cities");
       const data = await res.json();
       setSavedCities(Array.isArray(data) ? data : []);
@@ -51,7 +55,7 @@ export default function Home() {
 
     try {
       const body = { name: weather.name, country: weather.sys?.country || "" };
-      const res = await fetch("http://localhost:5001/api/cities", {
+      const res = await fetch(backendUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -67,7 +71,7 @@ export default function Home() {
 
   const handleDelete = async (id: string) => {
     try {
-      const res = await fetch(`http://localhost:5001/api/cities/${id}`, {
+      const res = await fetch(`${backendUrl}/${id}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete city");
