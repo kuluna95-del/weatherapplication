@@ -5,18 +5,20 @@ require("dotenv").config();
 
 const app = express();
 
-// Allow requests from any origin (for frontend Vercel)
-// You can replace "*" with your Vercel URL for production
-app.use(cors()); 
+
+const frontendUrl = "https://portfolio2-4mx2-2jn48qiru-steves-projects-fd8cfd5b.vercel.app";
+app.use(cors({ origin: frontendUrl }));
+
+// Parse JSON
 app.use(express.json());
 
-// Connect to MongoDB (Weather App DB)
+// Connecter à MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected for Weather App"))
   .catch((err) => console.error("MongoDB connect error:", err));
 
-// City model
+// Modèle City
 const citySchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
   country: { type: String },
@@ -24,12 +26,12 @@ const citySchema = new mongoose.Schema({
 
 const City = mongoose.model("City", citySchema);
 
-// Test route for root
+// Route test
 app.get("/", (req, res) => {
   res.send("Weather backend is running!");
 });
 
-// Routes
+//  Routes API
 app.get("/api/cities", async (req, res) => {
   try {
     const cities = await City.find();
@@ -63,7 +65,7 @@ app.delete("/api/cities/:id", async (req, res) => {
   }
 });
 
-// Start server
+//  Lancer le serveur
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () =>
   console.log(`Weather App server running on port ${PORT}`)
